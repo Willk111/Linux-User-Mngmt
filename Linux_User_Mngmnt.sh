@@ -70,3 +70,37 @@ function list_users {
     echo "User accounts on the system:"
     cat /etc/passwd | awk -F: '{print "- " $1 " (UID: " $3 ")"}'
 }
+
+# Check the passed option
+if [[ $# -eq 0 ]]; then
+    echo "Error: No options provided. Use -h or --help for usage."
+    exit 1
+fi
+
+echo "Option passed: $1"  # Debugging line to check what argument is passed
+
+case "$1" in
+    -c|--create)
+        echo "Create option selected"  # Debugging line
+        create_user
+        ;;
+    -d|--delete)
+        echo "Delete option selected"  # Debugging line
+        delete_user
+        ;;
+    -r|--reset)
+        echo "Reset option selected"  # Debugging line
+        reset_password
+        ;;
+    -l|--list)
+        echo "List option selected"  # Debugging line
+        list_users
+        ;;
+    -h|--help)
+        display_usage
+        ;;
+    *)
+        echo "Invalid option. Use -h or --help for usage."
+        exit 1
+        ;;
+esac
