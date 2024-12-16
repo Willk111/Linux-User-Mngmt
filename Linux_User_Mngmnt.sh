@@ -1,18 +1,21 @@
 #!/bin/bash
 
-#Remember to run "chmod 755" on this file for it to work.
+#Remember to run "chmod 755" or "chmod +x" on this file for it to work.
 
 #This will display usage options of the script for the user:
 function display_usage {
     echo "Usage: $0 [OPTIONS]"
-    echo "options"
-    echo "  -c, --create Create a new user account"
-    echo "  -d, --delete  Delete an existing user account."
-    echo "  -r, --reset   Reset password for an existing user account."
-    echo "  -l, --list    List all user accounts on the system."
-    echo "  -h, --help    Display this help and exit."
-}
+    echo ""
+    echo "Single user options:"
+    echo "  -c, --create    Create a new user account"
+    echo "  -d, --delete    Delete an existing user account."
+    echo "  -r, --reset     Reset password for an existing user account."
+    echo "  -l, --list      List all user accounts on the system."
+    echo "  -h, --help      Display this help and exit."
+    echo "       "
+  
 
+#Function to create a user
 function create_user {
     read -p "Enter the new users username please: " username
 
@@ -31,6 +34,7 @@ function create_user {
     fi
 }
 
+# Function to delete existing user
 function delete_user {
     read -p "Enter the username of the user you want to delete: " username
 
@@ -77,7 +81,8 @@ if [[ $# -eq 0 ]]; then
     exit 1
 fi
 
-echo "Option passed: $1"  # Debugging line to check what argument is passed
+#Uncomment this line to enable debuging output
+#echo "Option passed: $1"  # Debugging line to check what argument is passed
 
 case "$1" in
     -c|--create)
