@@ -46,3 +46,27 @@ function delete_user {
     fi
 
 }
+
+# Function to reset the password for an existing user account
+function reset_password {
+    read -p "Enter the username to reset password: " username
+
+    # Check if the username exists
+    if id "$username" &>/dev/null; then
+        # Prompt for password (Note: you might want to use 'read -s' to hide the password input)
+        read -p "Enter the new password for $username: " password
+
+        # Set the new password
+        echo "$username:$password" | sudo chpasswd
+
+        echo "Password for user '$username' reset successfully."
+    else
+        echo "Error: The username '$username' does not exist. Please enter a valid username."
+    fi
+}
+
+# Function to list all user accounts on the system
+function list_users {
+    echo "User accounts on the system:"
+    cat /etc/passwd | awk -F: '{print "- " $1 " (UID: " $3 ")"}'
+}
