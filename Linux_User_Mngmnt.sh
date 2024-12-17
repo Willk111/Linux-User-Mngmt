@@ -13,7 +13,11 @@ function display_usage {
     echo "  -l, --list      List all user accounts on the system."
     echo "  -h, --help      Display this help and exit."
     echo "       "
-  
+    echo "User Groups options:"
+    echo "  -cg, --create-group  Creates a new user group"
+    echo "  -ga, --group-add     Adds a user to a group"
+    echo "  -gr, --group-remove  Removes a user from a group"
+}
 
 #Function to create a user
 function create_user {
@@ -69,6 +73,31 @@ function reset_password {
     fi
 }
 
+function create_group {
+    read -p "Enter the name of the group you would like to create:" groupname
+
+    # Check if group already exists
+    if getent group "$group_name" > /dev/null 2>&1; then
+        echo "Group name already exists. Please enter a diffrent name"
+        return 1
+    else 
+        if sudo groupadd "$groupname"; then
+            echo "User Group '$groupname' has been created"
+        else 
+            echo "User group could not be created"
+        fi
+    fi
+}
+
+#function add_user_to_group {
+#    read -p "Enter the username you want to use" username
+#    read -p "Enter the group name:" groupname
+    
+
+#    if id "$username"
+#}
+
+
 # Function to list all user accounts on the system
 function list_users {
     echo "User accounts on the system:"
@@ -86,26 +115,32 @@ fi
 
 case "$1" in
     -c|--create)
-        echo "Create option selected"  # Debugging line
         create_user
         ;;
     -d|--delete)
-        echo "Delete option selected"  # Debugging line
         delete_user
         ;;
     -r|--reset)
-        echo "Reset option selected"  # Debugging line
         reset_password
         ;;
     -l|--list)
-        echo "List option selected"  # Debugging line
         list_users
         ;;
     -h|--help)
         display_usage
         ;;
+    -cg|--create-group)
+        create_group
+        ;;
+
+    #-ga|--group-add
+    #    echo "Group add option selected"
+    #    add_user_to_group
+    #    ;;
     *)
         echo "Invalid option. Use -h or --help for usage."
         exit 1
         ;;
+    
 esac
+
