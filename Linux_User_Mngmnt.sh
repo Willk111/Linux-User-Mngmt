@@ -74,7 +74,7 @@ function reset_password {
 }
 
 function create_group {
-    read -p "Enter the name of the group you would like to create:" groupname
+    read -p "Enter the name of the group you would like to create:  " groupname
 
     # Check if group already exists
     if getent group "$group_name" > /dev/null 2>&1; then
@@ -89,13 +89,29 @@ function create_group {
     fi
 }
 
-#function add_user_to_group {
-#    read -p "Enter the username you want to use" username
-#    read -p "Enter the group name:" groupname
-    
+function add_user_to_group {
+    read -p "Enter the username you want to use:  " username
+    read -p "Enter the group name:  " groupname
 
-#    if id "$username"
-#}
+        # Check if the group exists
+    if ! getent group "$groupname" > /dev/null 2>&1; then
+        echo "Group '$groupname' does not exist."
+        return 1
+    fi
+
+    # Check if the username exists
+    if ! id "$username" > /dev/null 2>&1; then
+        echo "User '$username' does not exist."
+        return 1
+    fi
+
+    if sudo usermod -a -G $groupname $username; then
+        echo "User '$username' has been added to the user gropu '$groupname'"
+    else
+        echo "An error occoured, please check the username and groupname you are using"
+        return 1
+    fi
+}
 
 
 # Function to list all user accounts on the system
@@ -110,7 +126,7 @@ if [[ $# -eq 0 ]]; then
     exit 1
 fi
 
-#Uncomment this line to enable debuging output
+#Uncomment the line below to enable debuging output
 #echo "Option passed: $1"  # Debugging line to check what argument is passed
 
 case "$1" in
@@ -132,11 +148,9 @@ case "$1" in
     -cg|--create-group)
         create_group
         ;;
-
-    #-ga|--group-add
-    #    echo "Group add option selected"
-    #    add_user_to_group
-    #    ;;
+    -ga|--group-add)
+        add_user_to_group
+        ;;
     *)
         echo "Invalid option. Use -h or --help for usage."
         exit 1
