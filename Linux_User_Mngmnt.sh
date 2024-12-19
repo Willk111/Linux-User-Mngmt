@@ -113,6 +113,23 @@ function add_user_to_group {
     fi
 }
 
+# Removes user form a user group:
+function remove_user_from_group {
+    read -p "Enter the username you would like to remove:   " username
+    read -p "Please enter the user group you would like to remove this user from:   " groupname
+
+    if ! getent group "$groupname" > /dev/null 2>&1; then
+        echo "The group '$groupname' does not exist."
+        return 1
+    fi 
+
+    if sudo deluser $username $gropuname; then
+        echo "User '$username' has been removed from the user gropu '$groupname"
+    else 
+        echo "An error occourd. Please check permissions and the names of your user and group."
+        return 1
+    fi
+}
 
 # Function to list all user accounts on the system
 function list_users {
