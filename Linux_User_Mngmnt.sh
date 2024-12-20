@@ -12,12 +12,17 @@ function display_usage {
     echo "  -r, --reset     Reset password for an existing user account."
     echo "  -l, --list      List all user accounts on the system."
     echo "  -h, --help      Display this help and exit."
+    echo "  -a, --audit     Audit logs for a selected user"
     echo "       "
     echo "User Groups options:"
     echo "  -cg, --create-group  Creates a new user group"
     echo "  -ga, --group-add     Adds a user to a group"
     echo "  -gr, --group-remove  Removes a user from a group"
 }
+
+# -------------------------------------------------------------------------
+# Single user functions 
+# -------------------------------------------------------------------------
 
 #Function to create a user
 function create_user {
@@ -59,10 +64,9 @@ function delete_user {
 function reset_password {
     read -p "Enter the username to reset password: " username
 
-    # Check if the username exists
+
     if id "$username" &>/dev/null; then
-        # Prompt for password (Note: you might want to use 'read -s' to hide the password input)
-        read -p "Enter the new password for $username: " password
+        read -p -s "Enter the new password for $username: " password
 
         # Set the new password
         echo "$username:$password" | sudo chpasswd
@@ -72,6 +76,39 @@ function reset_password {
         echo "Error: The username '$username' does not exist. Please enter a valid username."
     fi
 }
+
+function user_audit {
+    read -p "Enter the username you wish to user:   " username
+
+    if id "$username" &>/dev/null; then
+    echo "Audit log for user '$username':"
+    echo ""
+
+    echo "Last login:"
+    lastlog -u "$username"
+    echo ""
+
+    echo "Login/logout history:"
+    last "$username"
+    echo ""
+
+    echo "User '$username' command history:"
+    history_file="home/$username/.bash_history"
+
+        if [[ -f "$history_file" ]]; then
+            tail -n 10 "$history_file" 
+        else 
+            echo "No command history can be found for $username."
+        fi
+
+    else 
+        echo "Error: User $username does not exist. Please check the username and try again"
+    fi
+}
+
+# -----------------------------------------------------------------------
+# User Group Functions 
+# -----------------------------------------------------------------------
 
 function create_group {
     read -p "Enter the name of the group you would like to create:  " groupname
@@ -167,6 +204,12 @@ case "$1" in
         ;;
     -ga|--group-add)
         add_user_to_group
+        ;;
+    -gr|--group-remove)
+        remove_user_from_group
+        ;;
+    -a|--audit)
+        user_audit
         ;;
     *)
         echo "Invalid option. Use -h or --help for usage."
