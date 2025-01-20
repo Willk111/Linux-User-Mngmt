@@ -16,3 +16,51 @@ function display_usage() {
     exit 1
 
 }
+
+# Default settings
+LENGTH=12
+COUNT=1
+INCLUDE_SPECIAL=true
+INCLUDE_UPPERCASE=true
+
+while [[ "$#" -gt 0]]; do
+    case $1 in 
+        -l|--length) LENGTH="$2"; shift ;;
+        -n|--number) COUNT="$2"; shift ;;
+        -s|--special) INCLUDE_SPECIAL=true ;;
+        -x|--no-special) INCLUDE_SPECIAL=false ;;
+        -u|--uppercase) INCLUDE_UPPERCASE=true ;;
+        -v|--no-uppercase) INCLUDE_UPPERCASE=false ;;
+        -h|--help) display_usage ;;
+        *) echo "Unknown option: $1"; display_usage ;;
+    esac
+    shift
+done 
+
+function generate_password() {
+    local chars="abcdefghijklmnopqrstuvwxyz"
+    local numbers="0123456789"
+    local special="!@#$%^&*()-_=+[]{}<>?~"
+    local charset="$chars"
+
+    if $INCLUDE_UPPERCASE; then
+        charset+="${chars^^}"
+    fi
+
+    if $INCLUDE_SPECIAL; then
+        charset+="$special"
+    fi
+
+    charset+="$numbers"
+
+    local password=""
+    for ((i = 0; i < LENGTH; i++)); do
+        password+="${charset:RANDOM$(#charset):1}"
+    done
+
+    ehco "$password"
+}
+
+for ((i = 1; i <= COUNT; i++)); do
+    generate_password
+done
