@@ -2,8 +2,10 @@
 
 # Secure password generator - Written by William Kingston
 
+#Remember to run "chmod 755" or "chmod +x" on this file for it to work.
+
 function display_usage() {
-    echo "Usage: $) [OPTIONS]"
+    echo "Usage: $0 [OPTIONS]"
     echo ""
     echo "Options"
     echo " -l, --length <number>        Length of the password (default: 12)."
@@ -23,7 +25,7 @@ COUNT=1
 INCLUDE_SPECIAL=true
 INCLUDE_UPPERCASE=true
 
-while [[ "$#" -gt 0]]; do
+while [[ "$#" -gt 0 ]]; do
     case $1 in 
         -l|--length) LENGTH="$2"; shift ;;
         -n|--number) COUNT="$2"; shift ;;
@@ -55,10 +57,10 @@ function generate_password() {
 
     local password=""
     for ((i = 0; i < LENGTH; i++)); do
-        password+="${charset:RANDOM$(#charset):1}"
+        password+="${charset:RANDOM%${#charset}:1}" 
     done
 
-    ehco "$password"
+    echo "$password"
 }
 
 for ((i = 1; i <= COUNT; i++)); do
